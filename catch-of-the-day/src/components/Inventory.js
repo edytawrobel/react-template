@@ -7,7 +7,7 @@ class Inventory extends React.Component {
     return (
       <div>
         <h2>Inventory</h2>
-        <AddFishForm />
+        <AddFishForm addFish={this.props.addFish}/>  {/* * addFish passed down from Inventory props (originally coming crom Apps)  */}
       </div>
     )
   }

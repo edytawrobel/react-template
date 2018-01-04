@@ -13,7 +13,7 @@ class StorePicker extends React.Component {
     event.preventDefault();  //prevent form from submitting
     const storeId = this.storeInput.value;     //grab the data submitted
     this.context.router.transitionTo(`/store/${storeId}`);
-    //change the u rl from '/' to '/store/dataSubmitted'
+    //change the url from '/' to '/store/dataSubmitted'
   }
 
   render() {
