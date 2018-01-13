@@ -1,29 +1,47 @@
 import React from 'react';
-import { render } from 'react-dom';
 import Header from './Header';
 import Order from './Order';
 import Inventory from './Inventory';
 import Fish from './Fish';
 import sampleFishes from '../sample-fishes';
+import base from '../base';
 
 class App extends React.Component {
-
   constructor() {
     super();
+
     this.addFish = this.addFish.bind(this);
     this.loadSamples = this.loadSamples.bind(this);
     this.addToOrder = this.addToOrder.bind(this);
+
+    // getinitialState
     this.state = {
       fishes: {},
       order: {}
-    }
+    };
+  }
+
+  componentWillMount() {
+    this.ref = base.syncState(`${this.props.params.storeId}/fishes`,
+    {
+      context: this,
+      state: 'fishes'
+    });
+  }
+
+  // you need to stop syncing
+  componentWillUnmount() {
+    base.removeBinding(this.ref);
   }
 
   addFish(fish) {
-      const fishes = {...this.state.fishes}; // copy the state that already exists
-      const timestamp = Date.now(); // a key for the object to increment each added fish as it will be always unique
-      fishes[`fish-${timestamp}`] = fish; // add new fish
-      this.setState({ fishes: fishes }); // update the state
+    // update our state
+    const fishes = {...this.state.fishes};
+    // add in our new fish
+    const timestamp = Date.now();
+    fishes[`fish-${timestamp}`] = fish;
+    // set state
+    this.setState({ fishes });
   }
 
   loadSamples() {
@@ -32,9 +50,12 @@ class App extends React.Component {
     });
   }
 
-  addToOrder(key) {  // key: 'fish1', 'fish5' etc
+  addToOrder(key) {
+    // take a copy of our state
     const order = {...this.state.order};
-    order[key] = order[key] + 1 || 1; // if the key already exist, add one to the actual number, or just 1 if there is no order for the given(key) fish
+    // update or add the new number of fish ordered
+    order[key] = order[key] + 1 || 1;
+    // update our state
     this.setState({ order });
   }
 
@@ -42,14 +63,16 @@ class App extends React.Component {
     return (
       <div className="catch-of-the-day">
         <div className="menu">
-          <Header tagline="Fresh SeaFood Market"/>
+          <Header tagline="Fresh Seafood Market" />
           <ul className="list-of-fishes">
-            { Object
-              .keys(this.state.fishes)
-              .map(key => <Fish key={key} index={key} details={this.state.fishes[key]} addToOrder={this.addToOrder}/>)  }
+            {
+              Object
+                .keys(this.state.fishes)
+                .map(key => <Fish key={key} index={key} details={this.state.fishes[key]} addToOrder={this.addToOrder}/>)
+            }
           </ul>
         </div>
-        <Order/>
+        <Order fishes={this.state.fishes} order={this.state.order}/>
         <Inventory addFish={this.addFish} loadSamples={this.loadSamples} />
       </div>
     )
