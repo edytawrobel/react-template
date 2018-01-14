@@ -14,7 +14,8 @@ class App extends React.Component {
     this.loadSamples = this.loadSamples.bind(this);
     this.addToOrder = this.addToOrder.bind(this);
     this.updateFish = this.updateFish.bind(this);
-
+    this.removeFish = this.removeFish.bind(this);
+    this.removeFromOrder = this.removeFromOrder.bind(this);
     // getinitialState
     this.state = {
       fishes: {},
@@ -30,7 +31,7 @@ class App extends React.Component {
       state: 'fishes'
     });
 
-    // check if there is any order in localStorage
+    //check if there is any order in localStorage
     const localStorageRef = localStorage.getItem(`order-${this.props.params.storeId}`);
     if(localStorageRef) {
       //update our app Component order state
@@ -60,6 +61,18 @@ class App extends React.Component {
     this.setState({ fishes });
   }
 
+  updateFish(key, updatedFish) {
+    const fishes = {...this.state.fishes};
+    fishes[key] = updatedFish;
+    this.setState({ fishes })
+  }
+
+  removeFish(key) {
+    const fishes = {...this.state.fishes};
+    fishes[key] = null; // usually you would do delete, but you can't do that with firebase, hence using null instead
+    this.setState({ fishes });
+  }
+
   loadSamples() {
     this.setState({
       fishes: sampleFishes
@@ -75,10 +88,10 @@ class App extends React.Component {
     this.setState({ order });
   }
 
-  updateFish(key, updatedFish) {
-    const fishes = {...this.state.fishes};
-    fishes[key] = updatedFish;
-    this.setState({ fishes })
+  removeFromOrder(key) {
+    const order = {...this.state.order};
+    delete order[key];
+    this.setState({ order});
   }
 
   render() {
@@ -94,10 +107,13 @@ class App extends React.Component {
             }
           </ul>
         </div>
+        {/* to make params available at the order level */}
         <Order fishes={this.state.fishes}
               order={this.state.order}
-              params={this.props.params}/>        {/* to make params available at the order level */}
-        <Inventory updateFish={this.updateFish} fishes={this.state.fishes} addFish={this.addFish} loadSamples={this.loadSamples} />
+              params={this.props.params}
+              removeFromOrder={this.removeFromOrder}
+            />
+        <Inventory removeFish={this.removeFish} updateFish={this.updateFish} fishes={this.state.fishes} addFish={this.addFish} loadSamples={this.loadSamples} />
       </div>
     )
   }
