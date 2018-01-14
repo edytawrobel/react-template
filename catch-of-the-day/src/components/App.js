@@ -13,6 +13,7 @@ class App extends React.Component {
     this.addFish = this.addFish.bind(this);
     this.loadSamples = this.loadSamples.bind(this);
     this.addToOrder = this.addToOrder.bind(this);
+    this.updateFish = this.updateFish.bind(this);
 
     // getinitialState
     this.state = {
@@ -74,6 +75,12 @@ class App extends React.Component {
     this.setState({ order });
   }
 
+  updateFish(key, updatedFish) {
+    const fishes = {...this.state.fishes};
+    fishes[key] = updatedFish;
+    this.setState({ fishes })
+  }
+
   render() {
     return (
       <div className="catch-of-the-day">
@@ -90,7 +97,7 @@ class App extends React.Component {
         <Order fishes={this.state.fishes}
               order={this.state.order}
               params={this.props.params}/>        {/* to make params available at the order level */}
-        <Inventory addFish={this.addFish} loadSamples={this.loadSamples} />
+        <Inventory updateFish={this.updateFish} fishes={this.state.fishes} addFish={this.addFish} loadSamples={this.loadSamples} />
       </div>
     )
   }
